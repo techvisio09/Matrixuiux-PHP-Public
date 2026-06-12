@@ -1,0 +1,43 @@
+{
+  "summary": "Full E2E verification of P0 (DB-backed catalog) + P1 (Stripe payment) + P2 (JWT/Google auth). Backend: 15/15 pytest passed (10 prior + 5 new: refresh, logout, brute-force lockout 429, Google session_token via Bearer, /orders/my for authed user). Frontend on https preview: home/shop/category/product detail all render 37 products from /api/products (Loading store splash clears). Register → /account → logout → re-login flow works (data-testids all present). Google login button present on /login (Continue with Google → google-login-btn). Stripe E2E: cart → checkout form filled → redirect to checkout.stripe.com → test card 4242 4242 4242 4242 → redirect back to /checkout/success → payment-success element visible → cart cleared → /account shows order with 'Paid' badge ($79.99 total). AI chat regression OK — gpt-5 streamed full Windows 11 Pro response. PayPal correctly shown disabled with 'Coming Soon'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/payments/checkout/session", "issue": "Stripe hosted page displays US$79.98 instead of US$79.99 (1¢ low). Root cause: float→cents conversion inside emergentintegrations StripeCheckout uses int(amount*100); int(79.99*100)=int(7998.9999...)=7998. Backend MongoDB order total is correct ($79.99). Fix: pass amount as Decimal, or pre-compute cents with round(amount*100) and pass that, or open issue against emergentintegrations. Verified by test_checkout_session_creates_order (total math is right server-side) but Stripe charged amount is 1¢ short per cart."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "All pages (console)", "issues": ["GET /api/auth/me logs a 401 in browser console when guest visits any page (CatalogContext/AuthContext probe). Cosmetic — consider suppressing the network error log on guest probe or using a try/catch that swallows 401 silently."]},
+      {"screen": "CheckoutSuccess page", "issues": ["Missing data-testid=\"order-number\" on the success page (testid was requested in review). The order number IS rendered on /account 'My Orders' (e.g. #UC260611A6D6B6) and payment-success element is present. Minor — add an order-number testid to the success screen for automation."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_api.py",
+    "/app/backend/tests/test_auth_extra.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Minor, real $$ bug) Fix Stripe amount conversion so $79.99 charges as 7999 cents not 7998. Pass cents=round(total*100) or Decimal('79.99') into emergentintegrations.CheckoutSessionRequest.",
+    "(Cosmetic) Add data-testid=\"order-number\" on /checkout/success page.",
+    "(Cosmetic) Silence the guest /api/auth/me 401 console warning (try/catch + ignore in AuthContext)."
+  ],
+  "critical_code_review_comments": [
+    "payments.py uses float arithmetic for currency — switch to Decimal('79.99') or cents-int throughout to avoid 1¢ rounding (root cause of the Stripe $79.98 vs $79.99 finding).",
+    "routes/payments.py is well-structured (~187 lines): server-side price lookup + order creation before Stripe session is correct (cannot tamper price client-side).",
+    "auth.py brute-force lockout returning 429 after 5 failures works as designed (verified).",
+    "Google session validation accepts Bearer session_token and resolves via user_sessions collection — correct."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_auth_extra.py (NEW: refresh, logout, brute-force, google session, /orders/my-with-auth)"
+  ],
+  "success_rate": {"backend": "100% (15/15 pytest)", "frontend": "100% of critical flows; 2 cosmetic items"},
+  "test_credentials": "Admin admin@ucodesofttechus.com / Admin@UC2026! verified. Created E2E test users stripe_pay_*@test.com, orderchk_*@test.com, pytest_* (auto-cleaned in google session test, others remain).",
+  "seed_data_creation": "Backend seeded 37 products on startup as designed. Test created inline user+user_sessions rows for Google auth test and cleaned them up. Stripe test order UC260611A6D6B6 left in DB as evidence of successful payment.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All three phases (catalog migration, Stripe, auth) verified end-to-end including a real Stripe redirect + 4242 card payment + paid-status sync to /account. Only outstanding items are: (1) 1¢ float→cents bug in Stripe amount (charges $79.98 instead of $79.99 — fix in /app/backend/routes/payments.py line 113 or upstream), (2) missing testid on success page, (3) cosmetic console 401. Use https://software-staging.preview.emergentagent.com for browser tests (cookies are secure+samesite=none). Backend pytest: `cd /app/backend && python -m pytest tests/ -v`. Both test files (test_api.py, test_auth_extra.py) are pytest and reusable.",
+  "rca of the issue": "Stripe $0.01 underbilling: Python float 79.99*100 = 7998.9999999999999 (not 7999). emergentintegrations StripeCheckout.create_checkout_session converts to Stripe cents via int(amount*100) which truncates the .9999..., yielding 7998 cents. MongoDB order document keeps the correct $79.99 (rounded). Fix at app boundary: compute cents server-side with round() or Decimal and pass an integer cents value, or pass amount as Decimal('79.99'). Reproduction: cart with windows-11-pro qty 1 → checkout → Stripe displays US$79.98. Mitigation: see action item 1."
+}

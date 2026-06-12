@@ -1,0 +1,35 @@
+{
+  "summary": "Regression smoke test of refactored frontend components (Header, CategoryPage, ProductDetail+Sections, JivoChat, variants.js). All core flows pass: home renders, mega-menu MS & Antivirus open on hover, currency switching USD↔GBP changes price symbols, dark-mode toggle adds 'dark' class on <html>, category page filters render with 4 products in Office 2024 PC and 19 cards across, shop page has 37 cards, product detail renders variants (5 buttons, 7 disabled/blurred elements), Add-to-Cart updates header badge, cart page renders with totals, Proceed-to-Checkout opens ProAssist Premium upsell modal correctly, declining advances to /checkout with form (14 inputs). JivoChat opens, AI streams a proper GPT-5 response (e.g. 'Yes—UCODE SOFTTECH LLC sells genuine Microsoft Office 2024 for PC and Mac as a one-time purchase…'). Mobile @390px: no horizontal overflow on home or checkout; hamburger opens mobile menu, MS group expands to 12 links.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "All pages (document.title)", "issues": ["Browser tab title is still the CRA boilerplate 'Emergent | Fullstack App' instead of 'UCODE SOFTTECH LLC' brand. Update public/index.html <title> and/or add per-page titles."]},
+      {"screen": "Cart sheet / ProAssist modal", "issues": ["Radix DialogContent missing aria-describedby — accessibility warning in console (non-blocking). Add a DialogDescription or aria-describedby on CartSheet and ProAssist modal."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Optional) Update document.title to 'UCODE SOFTTECH LLC' branding in /app/frontend/public/index.html.",
+    "(Optional, a11y) Add DialogDescription / aria-describedby to CartSheet and the ProAssist upsell modal to silence Radix warnings."
+  ],
+  "critical_code_review_comments": [
+    "ProductDetail.jsx is 419 lines — already split into ProductDetailSections.jsx which is good; if it grows further, consider splitting the variant matrix UI into its own component.",
+    "Header.jsx (~290 lines) is well-factored after refactor: MS/AV mega menus, mobile menu, header actions are clearly separated.",
+    "variants.js (96 lines) is concise and reusable.",
+    "Backend /api/chat correctly streams via SSE and handles lead-marker extraction; LEAD_RE stripping before persisting clean message is correct.",
+    "No console errors detected; only minor Radix a11y warnings."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (not tested per request)", "frontend": "100%"},
+  "test_credentials": "None required.",
+  "seed_data_creation": "None.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Frontend regression after major refactor PASSED end-to-end at https://software-staging.preview.emergentagent.com. Verified mega-menu, currency, dark mode, category filtering, shop grid, product detail + variants + Add-to-Cart, cart updates, ProAssist upsell modal, Checkout form (mock), JivoChat AI streaming response from gpt-5, and mobile 390px responsiveness (no horizontal overflow). Only cosmetic items remain: document.title is CRA default and Radix DialogContent a11y warning.",
+  "rca of the issue": "No bugs found requiring RCA."
+}

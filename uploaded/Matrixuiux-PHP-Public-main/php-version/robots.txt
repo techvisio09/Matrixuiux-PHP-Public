@@ -1,0 +1,15 @@
+# Matrixuiux Software — robots.txt
+User-agent: *
+Allow: /
+Disallow: /cart.php
+Disallow: /checkout.php
+Disallow: /login.php
+Disallow: /register.php
+Disallow: /account.php
+Disallow: /admin.php
+Disallow: /admin-email-preview.php
+Disallow: /logout.php
+Disallow: /order-success.php
+Disallow: /ajax/
+
+Sitemap: https://software-staging.preview.emergentagent.com/sitemap.xml
