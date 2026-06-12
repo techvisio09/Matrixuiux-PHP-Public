@@ -72,17 +72,58 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* ---------- Premium cart popup (slide-in mini drawer) ---------- */
+function showCartPopup({ name, image, price }) {
+  const wrap = document.getElementById('cart-popup');
+  if (!wrap) return;
+  document.getElementById('cart-popup-name').textContent = name || 'Added to cart';
+  document.getElementById('cart-popup-price').textContent = price || '';
+  const img = document.getElementById('cart-popup-img');
+  if (image) { img.src = image; img.alt = name || ''; }
+  wrap.classList.remove('show');
+  void wrap.offsetWidth;
+  wrap.classList.add('show');
+  // Restart bar animation
+  const bar = wrap.querySelector('.cart-popup-progress');
+  if (bar) { bar.style.display = 'none'; void bar.offsetWidth; bar.style.display = ''; }
+  clearTimeout(window.__cartPopupTimer);
+  window.__cartPopupTimer = setTimeout(hideCartPopup, 4500);
+}
+function hideCartPopup() {
+  const wrap = document.getElementById('cart-popup');
+  if (wrap) wrap.classList.remove('show');
+}
+
+// Pull product display info from the surrounding card/row
+function popupInfoForButton(btn) {
+  const card = btn.closest('.product-card, .shop-row, .strip-card, [data-product-detail-card]');
+  let name = '', image = '', price = '';
+  if (card) {
+    const img = card.querySelector('img');
+    image = img ? img.src : '';
+    // Title selector covers product-card, strip-card, shop-row layouts
+    const nameEl = card.querySelector('.product-title, h1, .fw-bold a, .text-body.fw-bold, [data-testid^="product-title"]');
+    if (nameEl) name = nameEl.textContent.trim();
+    const priceEl = card.querySelector('.text-primary.fw-bold, .fw-bold.text-primary, [data-testid="checkout-total"]');
+    if (priceEl) price = priceEl.textContent.trim();
+  }
+  // Fallbacks from buttons or globals
+  if (!name) name = btn.getAttribute('aria-label') || btn.dataset.name || btn.dataset.slug || 'Product';
+  return { name, image, price };
+}
+
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.add-to-cart-btn');
   if (btn) {
     e.preventDefault();
     if (btn.dataset.added) { window.location.href = 'cart.php'; return; }
     const qty = parseInt(btn.dataset.qty || document.getElementById('pd-qty')?.value || '1', 10);
+    const info = popupInfoForButton(btn);
     const data = await cartAction({ action: 'add', slug: btn.dataset.slug, qty });
     updateCartBadge(data.count);
     markAdded(btn);
     if (window.CART_SLUGS && !window.CART_SLUGS.includes(btn.dataset.slug)) window.CART_SLUGS.push(btn.dataset.slug);
-    showToast('<i class="bi bi-check-circle me-1"></i> Added to cart — open the cart to review or continue shopping');
+    showCartPopup(info);
     return;
   }
   const buy = e.target.closest('.buy-now-btn');

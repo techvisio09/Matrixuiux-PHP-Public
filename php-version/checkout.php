@@ -84,236 +84,167 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $checkoutHeader = true;
 include __DIR__ . '/includes/header.php';
+$totalItems = count($items) + ($proAssist ? 1 : 0);
 ?>
-<div class="checkout-canvas">
-<div class="container py-4 pb-5" style="max-width: 800px;">
-  <!-- Checkout flow stepper -->
-  <div class="checkout-steps d-flex align-items-center mb-4 flex-wrap" data-testid="checkout-steps">
-    <div class="step done">
-      <span class="step-dot"><i class="bi bi-cart3"></i></span><span class="step-label">Cart</span>
-    </div>
-    <span class="step-line done"></span>
-    <div class="step active">
-      <span class="step-dot"><i class="bi bi-credit-card"></i></span><span class="step-label">Checkout</span>
-    </div>
-    <span class="step-line"></span>
-    <div class="step">
-      <span class="step-dot"><i class="bi bi-check2-circle"></i></span><span class="step-label">Done</span>
-    </div>
-    <a href="cart.php" class="ms-auto text-decoration-none small back-to-cart"><i class="bi bi-arrow-left me-1"></i>Back to Cart</a>
-  </div>
-
-  <?php if ($errors): ?>
-    <div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= esc($e) ?></li><?php endforeach; ?></ul></div>
-  <?php endif; ?>
-
-  <form method="post" class="d-grid gap-4">
+<div class="checkout-wrap">
+<div class="checkout-grid">
+  <!-- ============== LEFT: Compact form ============== -->
+  <form method="post" class="checkout-card" data-testid="checkout-form">
     <input type="hidden" name="pro" value="<?= $proAssist ? '1' : '0' ?>">
     <input type="hidden" name="payment_method" id="payment-method-input" value="card">
 
-    <!-- Banner 1: Order Summary (receipt style) -->
-    <div class="card co-banner p-4" data-testid="co-banner-summary">
-      <div class="d-flex align-items-center gap-2 mb-3">
-        <span class="logo-mark">F</span>
-        <span class="fw-bold"><?= SITE_BRAND ?></span>
-        <span class="ms-auto badge rounded-pill text-bg-success-subtle text-success border border-success-subtle"><i class="bi bi-lock-fill me-1"></i>Secure Checkout</span>
-      </div>
-      <small class="text-secondary">Pay <?= SITE_LEGAL ?></small>
-      <div class="receipt-amount fw-bold" data-testid="checkout-amount-banner"><?= format_price($total) ?></div>
-      <small class="text-secondary mb-3"><?= count($items) + ($proAssist ? 1 : 0) ?> item<?= (count($items) + ($proAssist ? 1 : 0)) !== 1 ? 's' : '' ?> · Instant digital delivery</small>
-      <hr class="my-3">
-      <?php foreach ($items as $i): ?>
-        <div class="d-flex gap-2 mb-3 align-items-center" data-testid="summary-item-<?= esc($i['slug']) ?>">
-          <img src="<?= esc($i['image']) ?>" alt="<?= esc($i['name']) ?> — lifetime license key | <?= SITE_BRAND ?>" style="width:48px;height:48px;object-fit:contain;" class="bg-body-tertiary rounded p-1">
-          <div class="flex-grow-1">
-            <div class="small fw-semibold"><?= esc($i['name']) ?></div>
-            <div class="d-flex justify-content-between align-items-center mt-1">
-              <div class="input-group input-group-sm" style="width: 96px;">
-                <button type="button" class="btn btn-outline-secondary px-2" data-cart-qty="<?= $i['qty'] - 1 ?>" data-slug="<?= esc($i['slug']) ?>">−</button>
-                <span class="form-control text-center px-1"><?= (int)$i['qty'] ?></span>
-                <button type="button" class="btn btn-outline-secondary px-2" data-cart-qty="<?= $i['qty'] + 1 ?>" data-slug="<?= esc($i['slug']) ?>">+</button>
-              </div>
-              <span class="fw-bold text-primary small"><?= format_price($i['price'] * $i['qty']) ?></span>
-            </div>
-          </div>
-        </div>
-      <?php endforeach; ?>
-      <?php if ($proAssist): ?>
-        <div class="d-flex gap-2 mb-3 border-top pt-3 align-items-center">
-          <span class="logo-mark" style="width:48px;height:48px;"><i class="bi bi-headset"></i></span>
-          <div class="flex-grow-1">
-            <div class="small fw-semibold">ProAssist Premium Installation</div>
-            <div class="d-flex justify-content-between small"><span class="text-secondary">Qty 1</span><span class="fw-bold text-primary"><?= format_price(PRO_ASSIST_PRICE) ?></span></div>
-          </div>
-        </div>
-      <?php endif; ?>
-      <hr class="my-2">
-      <!-- Coupon -->
-      <?php if ($couponCode): ?>
-        <div class="d-flex justify-content-between align-items-center small mb-2 text-success" data-testid="coupon-applied">
-          <span><i class="bi bi-tag-fill me-1"></i>Coupon <strong><?= esc($couponCode) ?></strong> applied</span>
-          <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="applyCoupon('')" data-testid="coupon-remove">Remove</button>
-        </div>
-      <?php else: ?>
-        <div class="input-group input-group-sm mb-2" style="max-width: 320px;">
-          <input id="coupon-input" class="form-control" placeholder="Coupon code" data-testid="coupon-input">
-          <button type="button" class="btn btn-outline-primary" onclick="applyCoupon(document.getElementById('coupon-input').value)" data-testid="coupon-apply">Apply</button>
-        </div>
-      <?php endif; ?>
-      <div class="d-flex justify-content-between small mb-2"><span class="text-secondary">Subtotal</span><span class="fw-semibold"><?= format_price($subtotal) ?></span></div>
-      <?php if ($savings > 0): ?>
-        <div class="d-flex justify-content-between small mb-2 text-success"><span>You Save</span><span data-testid="checkout-savings">-<?= format_price($savings) ?></span></div>
-      <?php endif; ?>
-      <?php if ($discount > 0): ?>
-        <div class="d-flex justify-content-between small mb-2 text-success"><span>Coupon (<?= esc($couponCode) ?> — <?= $couponPct ?>% off)</span><span data-testid="checkout-discount">-<?= format_price($discount) ?></span></div>
-      <?php endif; ?>
-      <div class="summary-total d-flex justify-content-between align-items-center p-3 rounded-3 mt-1">
-        <span class="fw-bold">Total</span><span class="fw-bold text-primary fs-5" data-testid="checkout-total"><?= format_price($total) ?></span>
-      </div>
+    <?php if ($errors): ?>
+      <div class="alert alert-danger py-2 mb-3"><ul class="mb-0 small"><?php foreach ($errors as $e): ?><li><?= esc($e) ?></li><?php endforeach; ?></ul></div>
+    <?php endif; ?>
+
+    <!-- SECTION 1: Contact -->
+    <div class="section-tag" data-testid="checkout-section-contact"><span class="num">1</span> Contact</div>
+    <div class="compact-row full mb-2">
+      <input type="email" name="email" required class="form-control compact-input" placeholder="Email address — where we send your license key" value="<?= esc($_POST['email'] ?? '') ?>" data-testid="checkout-email">
     </div>
 
-    <!-- Banner 2: Contact Information -->
-    <div class="card co-banner p-4" data-testid="co-banner-contact">
-      <div class="co-head d-flex align-items-center gap-3 mb-3">
-        <span class="co-num">1</span>
-        <div class="lh-sm">
-          <h5 class="fw-bold mb-0">Contact Information</h5>
-          <small class="text-secondary">Where we send your license key</small>
-        </div>
-        <i class="bi bi-envelope-paper co-head-icon ms-auto"></i>
-      </div>
-      <label class="form-label">Email Address *</label>
-      <input type="email" name="email" required class="form-control" placeholder="your@email.com" value="<?= esc($_POST['email'] ?? '') ?>" data-testid="checkout-email">
-      <small class="text-secondary mt-1">License key delivered to this email within 15-30 minutes</small>
+    <!-- SECTION 2: Billing -->
+    <div class="section-tag mt-3" data-testid="checkout-section-billing"><span class="num">2</span> Billing Details</div>
+    <div class="compact-row mb-2">
+      <input name="first_name" required class="form-control compact-input" placeholder="First name" value="<?= esc($_POST['first_name'] ?? '') ?>" data-testid="checkout-first-name">
+      <input name="last_name"  required class="form-control compact-input" placeholder="Last name"  value="<?= esc($_POST['last_name']  ?? '') ?>" data-testid="checkout-last-name">
     </div>
+    <?php
+    $phoneFlags = ['+1' => '🇺🇸', '+44' => '🇬🇧', '+61' => '🇦🇺', '+49' => '🇩🇪', '+33' => '🇫🇷', '+34' => '🇪🇸', '+39' => '🇮🇹', '+31' => '🇳🇱', '+91' => '🇮🇳', '+971' => '🇦🇪', '+64' => '🇳🇿'];
+    $selCode = $_POST['phone_code'] ?? '+1';
+    ?>
+    <div class="input-group mb-2">
+      <span class="input-group-text phone-flag compact-input" style="border-top-right-radius:0;border-bottom-right-radius:0;" id="phone-flag" data-testid="phone-flag"><?= $phoneFlags[$selCode] ?? '🇺🇸' ?></span>
+      <select name="phone_code" id="phone-code" class="form-select compact-input phone-code" style="max-width:96px; border-radius:0;" onchange="syncPhoneFlag(this)" data-testid="phone-code-select">
+        <?php foreach ($phoneFlags as $code => $flag): ?>
+          <option value="<?= $code ?>" data-flag="<?= $flag ?>" <?= $selCode === $code ? 'selected' : '' ?>><?= $code ?></option>
+        <?php endforeach; ?>
+      </select>
+      <input name="phone" required class="form-control compact-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" placeholder="Phone number" value="<?= esc($_POST['phone'] ?? '') ?>" data-testid="phone-number-input">
+    </div>
+    <div class="compact-row full mb-2">
+      <input name="address" required class="form-control compact-input" placeholder="Street address" value="<?= esc($_POST['address'] ?? '') ?>" data-testid="checkout-address">
+    </div>
+    <div class="compact-row cols-3 mb-2">
+      <input name="city" required class="form-control compact-input" placeholder="City" value="<?= esc($_POST['city'] ?? '') ?>" data-testid="checkout-city">
+      <select name="state" required class="form-select compact-input" data-testid="state-select">
+        <option value="">State</option>
+        <?php foreach (['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC','Other'] as $st): ?>
+          <option value="<?= $st ?>" <?= ($_POST['state'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
+        <?php endforeach; ?>
+      </select>
+      <input name="zip"  required class="form-control compact-input" placeholder="ZIP" value="<?= esc($_POST['zip'] ?? '') ?>" data-testid="checkout-zip">
+    </div>
+    <input type="hidden" name="country" value="US">
 
-    <!-- Banner 3: Billing Address -->
-    <div class="card co-banner p-4" data-testid="co-banner-billing">
-      <div class="co-head d-flex align-items-center gap-3 mb-3">
-        <span class="co-num">2</span>
-        <div class="lh-sm">
-          <h5 class="fw-bold mb-0">Billing Address</h5>
-          <small class="text-secondary">Used for payment verification only</small>
+    <!-- SECTION 3: Payment -->
+    <div class="section-tag mt-3" data-testid="checkout-section-payment"><span class="num">3</span> Payment</div>
+    <div class="pay-tiles mb-2">
+      <div id="pay-card" class="pay-option pay-tile active" onclick="selectPayMethod('card')" data-testid="pay-method-card">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-credit-card-2-front text-primary fs-5"></i>
+          <span class="fw-bold small">Card</span>
+          <span class="d-flex gap-1 ms-auto">
+            <img src="assets/images/payments/visa.svg" alt="" class="pay-icon pay-icon-sm"><img src="assets/images/payments/mastercard.svg" alt="" class="pay-icon pay-icon-sm"><img src="assets/images/payments/amex.svg" alt="" class="pay-icon pay-icon-sm">
+          </span>
         </div>
-        <i class="bi bi-geo-alt co-head-icon ms-auto"></i>
       </div>
-      <div class="row g-3">
-        <div class="col-md-6"><label class="form-label">First Name *</label><input name="first_name" required class="form-control" placeholder="John" value="<?= esc($_POST['first_name'] ?? '') ?>"></div>
-        <div class="col-md-6"><label class="form-label">Last Name *</label><input name="last_name" required class="form-control" placeholder="Doe" value="<?= esc($_POST['last_name'] ?? '') ?>"></div>
-        <div class="col-12"><label class="form-label">Phone Number *</label>
-          <?php
-          $phoneFlags = ['+1' => '🇺🇸', '+44' => '🇬🇧', '+61' => '🇦🇺', '+49' => '🇩🇪', '+33' => '🇫🇷', '+34' => '🇪🇸', '+39' => '🇮🇹', '+31' => '🇳🇱', '+91' => '🇮🇳', '+971' => '🇦🇪', '+64' => '🇳🇿'];
-          $selCode = $_POST['phone_code'] ?? '+1';
-          ?>
-          <div class="input-group phone-group">
-            <span class="input-group-text phone-flag" id="phone-flag" data-testid="phone-flag"><?= $phoneFlags[$selCode] ?? '🇺🇸' ?></span>
-            <select name="phone_code" id="phone-code" class="form-select phone-code" style="max-width:96px;" onchange="syncPhoneFlag(this)" data-testid="phone-code-select">
-              <?php foreach ($phoneFlags as $code => $flag): ?>
-                <option value="<?= $code ?>" data-flag="<?= $flag ?>" <?= $selCode === $code ? 'selected' : '' ?>><?= $code ?></option>
-              <?php endforeach; ?>
-            </select>
-            <input name="phone" required class="form-control" placeholder="555 123 4567" value="<?= esc($_POST['phone'] ?? '') ?>" data-testid="phone-number-input">
-          </div>
-          <div class="form-check mt-2">
-            <input class="form-check-input" type="checkbox" name="sms_consent" id="sms-consent" value="1" <?= !empty($_POST['sms_consent']) ? 'checked' : '' ?> data-testid="sms-consent">
-            <label class="form-check-label small text-secondary" for="sms-consent">By checking this box, you agree to receive SMS messages (order updates &amp; delivery notifications) from <?= SITE_BRAND ?>. Msg &amp; data rates may apply. Reply STOP to opt out.</label>
-          </div>
+      <div id="pay-paypal" class="pay-option pay-tile paypal" onclick="selectPayMethod('paypal')" data-testid="pay-method-paypal">
+        <div class="d-flex align-items-center gap-2">
+          <img src="assets/images/payments/paypal.svg" alt="" class="pay-icon pay-icon-sm">
+          <span class="fw-bold small"><span class="fst-italic" style="color:#003087">Pay</span><span class="fst-italic" style="color:#0070BA">Pal</span></span>
+          <small class="text-secondary ms-auto" style="font-size:.66rem;">via PayPal</small>
         </div>
-        <div class="col-12"><label class="form-label">Address *</label><input name="address" required class="form-control" placeholder="123 Main Street, Apt 4B" value="<?= esc($_POST['address'] ?? '') ?>"></div>
-        <div class="col-12"><label class="form-label">Address Line 2 (Optional)</label><input name="address2" class="form-control" placeholder="Suite, building, floor, etc." value="<?= esc($_POST['address2'] ?? '') ?>"></div>
-        <div class="col-md-6">
-          <label class="form-label">Country *</label>
-          <select name="country" class="form-select">
-            <?php foreach (['US' => 'United States', 'CA' => 'Canada', 'UK' => 'United Kingdom', 'AU' => 'Australia', 'EU' => 'Europe (Other)'] as $c => $n): ?>
-              <option value="<?= $c ?>" <?= ($_POST['country'] ?? 'US') === $c ? 'selected' : '' ?>><?= $n ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="col-md-6"><label class="form-label">City *</label><input name="city" required class="form-control" placeholder="New York" value="<?= esc($_POST['city'] ?? '') ?>"></div>
-        <div class="col-md-6">
-          <label class="form-label">State *</label>
-          <select name="state" required class="form-select" data-testid="state-select">
-            <option value="">Select</option>
-            <?php foreach (['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC','Other'] as $st): ?>
-              <option value="<?= $st ?>" <?= ($_POST['state'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="col-md-6"><label class="form-label">ZIP Code *</label><input name="zip" required class="form-control" placeholder="10001" value="<?= esc($_POST['zip'] ?? '') ?>"></div>
       </div>
     </div>
+    <div id="card-form" class="card-form-reveal mb-2" data-testid="card-details-form">
+      <input id="card-number" class="form-control compact-input mb-2" inputmode="numeric" autocomplete="cc-number" placeholder="Card number  ····  ····  ····  ····" maxlength="19" data-testid="card-number-input">
+      <div class="compact-row">
+        <input id="card-exp" class="form-control compact-input" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="5" data-testid="card-exp-input">
+        <input id="card-cvv" type="password" class="form-control compact-input" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4" data-testid="card-cvv-input">
+      </div>
+    </div>
+    <div id="paypal-info" class="d-none small text-secondary mb-2"><i class="bi bi-info-circle me-1"></i>You will be redirected to PayPal to securely complete payment.</div>
 
-    <!-- Banner 4: Payment — short & sweet -->
-    <div class="card co-banner p-4" data-testid="co-banner-payment">
-      <div class="co-head d-flex align-items-center gap-3 mb-3">
-        <span class="co-num">3</span>
-        <div class="lh-sm">
-          <h5 class="fw-bold mb-0">Payment</h5>
-          <small class="text-secondary">All transactions are secure and encrypted</small>
-        </div>
-        <i class="bi bi-shield-lock co-head-icon ms-auto"></i>
-      </div>
-      <div class="row g-3 mb-3">
-        <div class="col-sm-6">
-          <div id="pay-card" class="pay-option pay-tile active p-3 h-100" onclick="selectPayMethod('card')" data-testid="pay-method-card">
-            <div class="d-flex align-items-center gap-2">
-              <input type="radio" class="form-check-input mt-0" name="pm_radio" checked onclick="selectPayMethod('card')">
-              <i class="bi bi-credit-card-2-front text-primary fs-5"></i>
-              <span class="fw-bold">Card</span>
-            </div>
-            <div class="d-flex gap-1 mt-2 ps-4">
-              <img src="assets/images/payments/visa.svg" alt="Visa" class="pay-icon pay-icon-sm"><img src="assets/images/payments/mastercard.svg" alt="Mastercard" class="pay-icon pay-icon-sm"><img src="assets/images/payments/amex.svg" alt="American Express" class="pay-icon pay-icon-sm"><img src="assets/images/payments/discover.svg" alt="Discover" class="pay-icon pay-icon-sm">
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div id="pay-paypal" class="pay-option pay-tile paypal p-3 h-100" onclick="selectPayMethod('paypal')" data-testid="pay-method-paypal">
-            <div class="d-flex align-items-center gap-2">
-              <input type="radio" class="form-check-input mt-0" name="pm_radio" onclick="selectPayMethod('paypal')">
-              <img src="assets/images/payments/paypal.svg" alt="PayPal" class="pay-icon pay-icon-sm">
-              <span class="fw-bold"><span class="fst-italic" style="color:#003087">Pay</span><span class="fst-italic" style="color:#0070BA">Pal</span></span>
-            </div>
-            <small class="text-secondary d-block mt-2 ps-4">Checkout with your PayPal account</small>
-          </div>
-        </div>
-      </div>
-      <!-- Card details drop-down (shown when Card selected). Fields have NO name attrs —
-           they are never posted to our server; the charge is confirmed on Stripe's PCI-compliant page. -->
-      <div id="card-form" class="card-form-reveal mb-3" data-testid="card-details-form">
-        <div class="row g-3">
-          <div class="col-12">
-            <label class="form-label">Card Number</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-credit-card-2-front text-primary"></i></span>
-              <input id="card-number" class="form-control" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" data-testid="card-number-input">
-              <span class="input-group-text card-brands" id="card-brands" data-testid="card-brand-icons">
-                <img src="assets/images/payments/visa.svg" alt="Visa" data-brand="visa" class="card-brand-icon">
-                <img src="assets/images/payments/mastercard.svg" alt="Mastercard" data-brand="mastercard" class="card-brand-icon">
-                <img src="assets/images/payments/amex.svg" alt="American Express" data-brand="amex" class="card-brand-icon">
-                <img src="assets/images/payments/discover.svg" alt="Discover" data-brand="discover" class="card-brand-icon">
-              </span>
-            </div>
-          </div>
-          <div class="col-7">
-            <label class="form-label">Expiry Date</label>
-            <input id="card-exp" class="form-control" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" data-testid="card-exp-input">
-          </div>
-          <div class="col-5">
-            <label class="form-label">CVV</label>
-            <div class="input-group">
-              <input id="card-cvv" type="password" class="form-control" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="4" data-testid="card-cvv-input">
-              <span class="input-group-text" title="3-4 digit code on the back of your card"><i class="bi bi-question-circle text-secondary"></i></span>
-            </div>
-          </div>
-        </div>
-        <div class="small text-secondary mt-2"><i class="bi bi-shield-lock-fill text-success me-1"></i>Your card is verified &amp; charged on Stripe's PCI-compliant secure page — we never store card data.</div>
-      </div>
-      <button id="btn-pay-card" type="submit" class="btn btn-primary btn-lg rounded-pill w-100" data-testid="checkout-pay-button">Pay Securely · <?= format_price($total) ?></button>
-      <button id="btn-pay-paypal" type="submit" class="btn btn-paypal btn-lg rounded-pill w-100 d-none" data-testid="checkout-paypal-button"><span class="fst-italic" style="color:#003087">Pay</span><span class="fst-italic" style="color:#0070BA">Pal</span> · Continue <?= format_price($total) ?></button>
-      <div class="text-center small text-secondary mt-3"><i class="bi bi-shield-lock me-1"></i>256-bit SSL · Powered by Stripe — card details are entered on the secure payment page</div>
-      <div class="text-center mt-1" style="font-size:.72rem;">By placing your order, you agree to our <a href="page.php?slug=terms-of-service">Terms</a> and <a href="page.php?slug=privacy-policy">Privacy Policy</a></div>
+    <button id="btn-pay-card" type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold" data-testid="checkout-pay-button">
+      <i class="bi bi-lock-fill me-1"></i>Pay Securely · <?= format_price($total) ?>
+    </button>
+    <button id="btn-pay-paypal" type="submit" class="btn btn-paypal w-100 py-2 rounded-pill fw-bold d-none" data-testid="checkout-paypal-button">
+      <span class="fst-italic" style="color:#003087">Pay</span><span class="fst-italic" style="color:#0070BA">Pal</span> · Continue <?= format_price($total) ?>
+    </button>
+    <div class="text-center small text-secondary mt-2" style="font-size:.72rem;">
+      <i class="bi bi-shield-lock-fill text-success me-1"></i>256-bit SSL · Powered by Stripe · Card data never stored
+      &nbsp;·&nbsp; <a href="page.php?slug=terms-of-service" class="text-decoration-none">Terms</a>
+      &nbsp;·&nbsp; <a href="page.php?slug=privacy-policy" class="text-decoration-none">Privacy</a>
     </div>
   </form>
+
+  <!-- ============== RIGHT: Sticky compact summary ============== -->
+  <aside class="checkout-card summary-stick" data-testid="checkout-summary">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <strong class="small">Order Summary</strong>
+      <a href="cart.php" class="text-decoration-none small back-to-cart" data-testid="back-to-cart"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+    </div>
+    <small class="text-secondary d-block mb-1"><?= $totalItems ?> item<?= $totalItems !== 1 ? 's' : '' ?> · Instant digital delivery</small>
+
+    <?php foreach ($items as $i): ?>
+      <div class="summary-mini" data-testid="summary-item-<?= esc($i['slug']) ?>">
+        <div class="summary-mini-img"><img src="<?= esc($i['image']) ?>" alt="<?= esc($i['name']) ?>"></div>
+        <div class="flex-grow-1 min-w-0">
+          <div class="small fw-semibold text-truncate"><?= esc($i['name']) ?></div>
+          <small class="text-secondary">Qty <?= (int)$i['qty'] ?></small>
+        </div>
+        <span class="fw-bold text-primary small"><?= format_price($i['price'] * $i['qty']) ?></span>
+      </div>
+    <?php endforeach; ?>
+    <?php if ($proAssist): ?>
+      <div class="summary-mini">
+        <div class="summary-mini-img" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); display:flex; align-items:center; justify-content:center; color:#fff;"><i class="bi bi-headset"></i></div>
+        <div class="flex-grow-1 min-w-0">
+          <div class="small fw-semibold">ProAssist Premium Installation</div>
+          <small class="text-secondary">Qty 1</small>
+        </div>
+        <span class="fw-bold text-primary small"><?= format_price(PRO_ASSIST_PRICE) ?></span>
+      </div>
+    <?php endif; ?>
+
+    <!-- Coupon (compact) -->
+    <?php if ($couponCode): ?>
+      <div class="d-flex justify-content-between align-items-center small text-success mt-2" data-testid="coupon-applied">
+        <span><i class="bi bi-tag-fill me-1"></i><?= esc($couponCode) ?> — <?= $couponPct ?>% off</span>
+        <button type="button" class="btn btn-sm btn-link text-danger p-0 small" onclick="applyCoupon('')" data-testid="coupon-remove">Remove</button>
+      </div>
+    <?php else: ?>
+      <div class="coupon-mini">
+        <input id="coupon-input" class="form-control" placeholder="Promo code" data-testid="coupon-input">
+        <button type="button" class="btn btn-outline-primary" onclick="applyCoupon(document.getElementById('coupon-input').value)" data-testid="coupon-apply">Apply</button>
+      </div>
+    <?php endif; ?>
+
+    <div class="d-flex justify-content-between small mt-2"><span class="text-secondary">Subtotal</span><span class="fw-semibold"><?= format_price($subtotal) ?></span></div>
+    <?php if ($savings > 0): ?>
+      <div class="d-flex justify-content-between small text-success"><span>You save</span><span data-testid="checkout-savings">-<?= format_price($savings) ?></span></div>
+    <?php endif; ?>
+    <?php if ($discount > 0): ?>
+      <div class="d-flex justify-content-between small text-success"><span>Coupon</span><span data-testid="checkout-discount">-<?= format_price($discount) ?></span></div>
+    <?php endif; ?>
+
+    <div class="summary-total-line">
+      <span class="fw-bold">Total</span>
+      <span class="price" data-testid="checkout-total"><?= format_price($total) ?></span>
+    </div>
+
+    <div class="d-flex justify-content-around mt-3 pt-2 border-top small text-secondary" style="font-size:.7rem;">
+      <span><i class="bi bi-shield-lock-fill text-success"></i> SSL</span>
+      <span><i class="bi bi-lightning-charge-fill text-warning"></i> Instant</span>
+      <span><i class="bi bi-arrow-counterclockwise text-primary"></i> 30-Day</span>
+    </div>
+
+    <div class="mt-3 text-center" style="font-size:.72rem;">
+      <small class="text-secondary d-block mb-1">Need help? Talk to a specialist:</small>
+      <a href="tel:<?= SITE_PHONE ?>" class="fw-bold text-decoration-none" style="color:#16a34a;"><i class="bi bi-telephone-fill me-1"></i><?= SITE_PHONE ?></a>
+    </div>
+  </aside>
 </div>
 </div>
 <?php include __DIR__ . '/includes/footer.php'; ?>

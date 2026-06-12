@@ -24,9 +24,9 @@
       <!-- Brand column -->
       <div class="col-lg-4">
         <div class="d-flex align-items-center gap-2 mb-2">
-          <?= render_logo(42) ?>
+          <span class="brand3d-wrap"><?= render_logo(42) ?></span>
           <span>
-            <span class="brand-text d-block lh-1 text-white">Matrixuiux <span class="brand-grad">Software</span></span>
+            <span class="brand-text-3d d-block lh-1 text-white" style="font-size:1.05rem;">Matrixuiux Software</span>
             <small class="brand-tag">AUTHORIZED RESELLER</small>
           </span>
         </div>
@@ -177,6 +177,36 @@
     <button class="btn chat-send-btn" type="submit" aria-label="Send" data-testid="chat-send"><i class="bi bi-send-fill"></i></button>
   </form>
   <div class="chat-talk-band px-3 py-2 small text-center" data-testid="chat-talk-band"><i class="bi bi-headset me-1"></i><strong>Prefer to talk?</strong> <?= SITE_HOURS ?> · <a href="tel:<?= SITE_PHONE ?>" class="fw-bold"><?= SITE_PHONE ?></a></div>
+</div>
+
+<!-- Floating toll-free phone CTA (visible on every page) -->
+<a href="tel:<?= SITE_PHONE ?>" class="floating-phone" data-testid="floating-phone-cta" aria-label="Call our toll-free number">
+  <span class="phone-ring"><i class="bi bi-telephone-fill"></i></span>
+  <span class="phone-text">
+    <small>Toll Free · 24/7</small>
+    <?= SITE_PHONE ?>
+  </span>
+</a>
+
+<!-- Premium cart popup (slides in after Add to Cart) -->
+<div id="cart-popup" data-testid="cart-popup" role="dialog" aria-label="Item added to cart">
+  <div class="cart-popup-head">
+    <span class="cart-popup-tick"><i class="bi bi-check-lg fw-bold"></i></span>
+    <strong class="small">Added to your cart</strong>
+    <button type="button" class="close" onclick="hideCartPopup()" aria-label="Close" data-testid="cart-popup-close"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="cart-popup-body">
+    <div class="cart-popup-img"><img id="cart-popup-img" src="" alt=""></div>
+    <div class="cart-popup-info">
+      <div class="name" id="cart-popup-name" data-testid="cart-popup-name"></div>
+      <div class="price" id="cart-popup-price" data-testid="cart-popup-price"></div>
+    </div>
+  </div>
+  <div class="cart-popup-actions">
+    <a href="cart.php" class="btn btn-primary" data-testid="cart-popup-view"><i class="bi bi-cart3 me-1"></i>View Cart</a>
+    <button type="button" class="btn btn-outline-secondary" onclick="hideCartPopup()" data-testid="cart-popup-continue">Continue</button>
+  </div>
+  <div class="cart-popup-progress" aria-hidden="true"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -55,12 +55,12 @@ include __DIR__ . '/includes/header.php';
         ])));
         $hi = app_icons();
         ?>
-        <div class="hero-showcase mx-auto" data-testid="hero-showcase">
+        <div class="hero-showcase mx-auto position-relative" data-testid="hero-showcase">
+          <span class="hero-watermark" aria-hidden="true">M</span>
           <div class="hero-showcase-frame">
             <div class="hero-art" aria-hidden="true">
               <span class="hero-art-glow glow-1"></span>
               <span class="hero-art-glow glow-2"></span>
-              <img src="assets/images/os/windows.svg" alt="" class="hero-win-motif">
               <span class="hero-tile tile-1"><img src="<?= esc($hi['word']) ?>" alt="Microsoft Word"></span>
               <span class="hero-tile tile-2"><img src="<?= esc($hi['excel']) ?>" alt="Microsoft Excel"></span>
               <span class="hero-tile tile-3"><img src="<?= esc($hi['powerpoint']) ?>" alt="Microsoft PowerPoint"></span>
@@ -464,7 +464,7 @@ include __DIR__ . '/includes/header.php';
 <!-- CTA band -->
 <section class="py-5">
   <div class="container">
-    <div class="rounded-4 text-center text-white p-5" style="background: linear-gradient(135deg, #141414, #2a2a2a);" data-testid="cta-band">
+    <div class="rounded-4 text-center text-white p-5 cta-band-dark" data-testid="cta-band">
       <h2 class="fw-bold">Get Your Microsoft Office License Today</h2>
       <p class="opacity-75 mx-auto" style="max-width:540px;">Authentic perpetual licenses with professional support and instant delivery. Join 50,000+ satisfied customers.</p>
       <div class="d-flex justify-content-center gap-4 flex-wrap small my-3 opacity-75">

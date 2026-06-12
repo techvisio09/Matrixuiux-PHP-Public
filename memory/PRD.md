@@ -352,3 +352,15 @@ All catalog data lives in `/app/frontend/src/mock.js`. Backend `server.py` now h
 - Credentials in /app/memory/test_credentials.md (admin@fivecodelabsoftware.com verified working Jun 11, 2026)
 - LIVE APP = /app/php-version (PHP+MySQL ucode_store DB). React/FastAPI deprecated per explicit user instruction.
 - After any pod rebuild: `apt-get install -y php-cli php-mysql php-curl php-mbstring php-xml mariadb-server mariadb-client`, restart frontend, re-create the two user accounts (seed now creates Fivecodelab-branded content)
+
+## Changelog — Jun 12, 2026 (Premium dark-blue overhaul + 360° 3D effects — verified via screenshots)
+- **New file** `/app/php-version/assets/css/theme3d.css` (loaded after `style.css`) — single source of truth for the overhaul
+- **Dark-blue palette sitewide**: --uc-blue #2563eb, dark mode bg #0a1428 + radial blue glow, dark blue checkout canvas, deep-navy gradient for promo/trust bars / cta / checkout brand banner, dark mode card surfaces #11254d→#0d1c3b
+- **360° product images (auto-rotate + bounce)**: gentle ±14° rotateY tilt (never crosses 90° → no mirror flip) on all product images in shop cards / strip / shop-row / hero glass / product detail; hover triggers full `product-spin360` 2.6s linear infinite. Drop-shadow lifts on hover. Honors prefers-reduced-motion.
+- **3D rotating logo + 3D brand text**: new `.brand3d-wrap` (perspective+rotateY 9s) and `.brand-text-3d` (layered text-shadow + subtle float). Applied in main navbar, footer brand, checkout banner.
+- **Checkout banner redesigned** (header.php): centered premium dark-blue band with large 3D rotating logo + "Matrixuiux Software" 3D wordmark + 256-bit Secure pill + toll-free phone + 4.6/5 chip. Replaces slim white header.
+- **Checkout single-screen** (checkout.php rewritten): two-column grid (form left, sticky compact order summary right). Compact .compact-input fields, .pay-tiles (Card/PayPal side-by-side), card form revealed beneath. Fits 1920×900 with no scroll for 1-2 items.
+- **Elegant cart popup** (slide-in mini drawer, footer.php + main.js): top-right card with rotating product image, name, price, View Cart / Continue actions, auto-dismiss with progress bar (4.5s). Replaces plain toast. Uses `popupInfoForButton()` to pull image/title/price from the surrounding card/row.
+- **Floating toll-free CTA** (footer.php + theme3d.css): bottom-left pill on EVERY page — pulsing green gradient, shaking phone icon, "TOLL FREE · 24/7" label + number. Hides text label on mobile (icon-only).
+- **Hero without boxed overlay** (index.php): removed the heavy frame border/shadow/grid, added giant transparent watermark "M" monogram (clamp 15rem→24rem) behind the floating tiles; product image floats cleanly with deep drop-shadow.
+- **Test credentials** updated for Matrixuiux PHP app.

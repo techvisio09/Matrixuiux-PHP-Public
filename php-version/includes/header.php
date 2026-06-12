@@ -73,27 +73,23 @@ $ogImage = $ogImage ?? site_url() . '/assets/images/badges/microsoft-verified.sv
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/theme3d.css" rel="stylesheet">
   <script>window.SITE_PHONE = '<?= SITE_PHONE ?>'; window.CART_SLUGS = <?= json_encode(array_keys(cart())) ?>;</script>
 </head>
 <body>
 
 <?php if ($checkoutHeader): ?>
-<!-- Slim secure-checkout header -->
-<nav class="navbar bg-body border-bottom">
-  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
-    <a class="navbar-brand d-flex align-items-center gap-2 me-0" href="index.php" data-testid="brand-logo">
-      <?= render_logo(36) ?>
-      <span class="brand-text">Matrixuiux <span class="brand-grad">Software</span></span>
+<!-- Centered premium checkout banner with 3D rotating logo + 3D brand text -->
+<nav class="checkout-brand-banner" data-testid="checkout-brand-banner">
+  <div class="container">
+    <a href="index.php" class="d-flex flex-column align-items-center text-decoration-none gap-2" data-testid="brand-logo">
+      <span class="brand3d-wrap brand3d-lg"><?= render_logo(56) ?></span>
+      <span class="brand-text-3d" data-testid="checkout-brand-text">Matrixuiux Software</span>
     </a>
-    <div class="d-none d-md-flex align-items-center gap-2 small">
-      <i class="bi bi-patch-check-fill text-success"></i>
-      <span class="fw-semibold">Shopper Approved</span>
-      <span class="text-secondary">5,519+ verified reviews</span>
-      <span class="badge text-bg-warning text-dark">★ 4.6</span>
-    </div>
-    <div class="d-flex align-items-center gap-3 small">
-      <a href="tel:<?= SITE_PHONE ?>" class="text-decoration-none fw-semibold"><i class="bi bi-telephone-fill me-1"></i><?= SITE_PHONE ?></a>
-      <span class="text-success fw-semibold d-none d-sm-inline"><i class="bi bi-lock-fill me-1"></i>Secure Checkout</span>
+    <div class="d-flex align-items-center gap-3 small mt-1 flex-wrap justify-content-center">
+      <span class="secure-pill"><i class="bi bi-lock-fill"></i> 256-bit Secure Checkout</span>
+      <a href="tel:<?= SITE_PHONE ?>" class="phone-link"><i class="bi bi-telephone-fill me-1"></i><?= SITE_PHONE ?></a>
+      <span class="text-warning small"><i class="bi bi-star-fill me-1"></i>4.6/5 · 5,519+ reviews</span>
     </div>
   </div>
 </nav>
@@ -124,9 +120,9 @@ $ogImage = $ogImage ?? site_url() . '/assets/images/badges/microsoft-verified.sv
 <nav class="navbar navbar-expand-lg bg-body border-bottom sticky-top">
   <div class="container position-relative">
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.php" data-testid="brand-logo">
-      <?= render_logo(42) ?>
+      <span class="brand3d-wrap"><?= render_logo(42) ?></span>
       <span>
-        <span class="brand-text d-block lh-1">Matrixuiux <span class="brand-grad">Software</span></span>
+        <span class="brand-text-3d d-block lh-1" style="font-size:1.05rem;">Matrixuiux Software</span>
         <small class="brand-tag">AUTHORIZED RESELLER</small>
       </span>
     </a>
