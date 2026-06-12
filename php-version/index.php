@@ -78,10 +78,14 @@ include __DIR__ . '/includes/header.php';
               <?php foreach ($heroSlides as $i => $hp): ?>
                 <a href="product.php?slug=<?= esc($hp['slug']) ?>" class="hero-slide hero-glass-slide<?= $i === 0 ? ' active' : '' ?>" aria-label="<?= esc($hp['name']) ?>" data-testid="hero-slide-<?= $i ?>">
                   <span class="hero-glass-thumb"><img src="<?= esc($hp['image']) ?>" alt="<?= esc(product_img_alt($hp)) ?>" title="<?= esc($hp['name']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>"></span>
-                  <span class="flex-grow-1 min-w-0">
-                    <span class="d-block fw-bold text-body text-truncate" style="font-size:.86rem;"><?= esc($hp['name']) ?></span>
-                    <span class="fw-bold text-primary"><?= format_price((float)$hp['price']) ?></span>
-                    <?php if ($hp['original_price']): ?><small class="text-secondary text-decoration-line-through ms-1"><?= format_price((float)$hp['original_price']) ?></small><?php endif; ?>
+                  <span class="hero-glass-text">
+                    <span class="hero-glass-name" data-testid="hero-glass-name-<?= $i ?>"><?= esc($hp['name']) ?></span>
+                    <span class="hero-glass-prices">
+                      <span class="hero-glass-price-now" data-testid="hero-glass-price-<?= $i ?>"><?= format_price((float)$hp['price']) ?></span>
+                      <?php if ($hp['original_price']): ?>
+                        <span class="hero-glass-price-old"><?= format_price((float)$hp['original_price']) ?></span>
+                      <?php endif; ?>
+                    </span>
                   </span>
                   <span class="hero-glass-cta"><i class="bi bi-arrow-right"></i></span>
                 </a>
