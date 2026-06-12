@@ -56,7 +56,8 @@ include __DIR__ . '/includes/header.php';
         $hi = app_icons();
         ?>
         <div class="hero-showcase mx-auto position-relative" data-testid="hero-showcase">
-          <span class="hero-watermark" aria-hidden="true">M</span>
+          <span class="hero-bg-photo" aria-hidden="true"></span>
+          <span class="hero-bg-aurora" aria-hidden="true"></span>
           <div class="hero-showcase-frame">
             <div class="hero-art" aria-hidden="true">
               <span class="hero-art-glow glow-1"></span>

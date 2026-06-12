@@ -168,23 +168,26 @@
 .hero-glass-thumb img,
 .product-3d-img {
   transform-style: preserve-3d;
-  animation: product-tilt 5.5s ease-in-out infinite;
-  transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), filter .3s ease;
+  animation: product-tilt 14s ease-in-out infinite;
+  transition: transform .6s cubic-bezier(.34, 1.2, .64, 1), filter .35s ease;
   filter: drop-shadow(0 10px 18px rgba(11, 23, 51, .18));
   will-change: transform;
 }
-/* Subtle bounce + tilt — never crosses 90° so the box-art never appears mirrored */
+/* Very subtle resting tilt — premium and non-distracting */
 @keyframes product-tilt {
-  0%, 100% { transform: translateY(0)    rotateY(-12deg) rotateX(2deg); }
-  50%      { transform: translateY(-6px) rotateY( 12deg) rotateX(-2deg); }
+  0%, 100% { transform: translateY(0)    rotateY(-6deg) rotateX(1deg); }
+  50%      { transform: translateY(-3px) rotateY( 6deg) rotateX(-1deg); }
 }
+/* Hover: deeper tilt only (no continuous spin) — feels like the box turns toward you */
 .product-card:hover .product-img-wrap img,
 .shop-row:hover .shop-row-img img,
 .strip-card:hover .strip-img img,
 .hero-glass-slide:hover .hero-glass-thumb img {
-  animation: product-spin360 2.6s linear infinite;
-  filter: drop-shadow(0 14px 24px rgba(37, 99, 235, .45));
+  animation-play-state: paused;
+  transform: translateY(-8px) rotateY(-14deg) rotateX(4deg) scale(1.05);
+  filter: drop-shadow(0 18px 28px rgba(37, 99, 235, .42));
 }
+/* Reserved spin keyframes — used by cart popup only */
 @keyframes product-spin360 {
   0%   { transform: rotateY(0deg)   scale(1.04); }
   50%  { transform: rotateY(180deg) scale(1.08); }
@@ -202,14 +205,19 @@
 }
 .product-detail-3d img {
   position: relative; z-index: 1; transform-style: preserve-3d;
-  animation: product-detail-tilt 7s ease-in-out infinite;
+  animation: product-detail-tilt 16s ease-in-out infinite;
   filter: drop-shadow(0 24px 36px rgba(11, 23, 51, .35));
+  transition: transform .8s cubic-bezier(.34, 1.2, .64, 1);
 }
 @keyframes product-detail-tilt {
-  0%, 100% { transform: rotateY(-14deg) rotateX(2deg)  translateY(0); }
-  50%      { transform: rotateY( 14deg) rotateX(-2deg) translateY(-10px); }
+  0%, 100% { transform: rotateY(-9deg) rotateX(1deg)  translateY(0); }
+  50%      { transform: rotateY( 9deg) rotateX(-1deg) translateY(-6px); }
 }
-.product-detail-3d:hover img { animation: product-spin360 4s linear infinite; }
+/* Hover: tilt deeper, no continuous spin */
+.product-detail-3d:hover img {
+  animation-play-state: paused;
+  transform: rotateY(-18deg) rotateX(4deg) scale(1.06) translateY(-10px);
+}
 @media (prefers-reduced-motion: reduce) {
   .product-img-wrap img, .shop-row-img img, .strip-img img, .hero-glass-thumb img,
   .product-detail-3d img, .product-3d-img { animation: none; }
@@ -217,6 +225,7 @@
 
 /* ---------- 4. HERO — REMOVED BOXED OVERLAY, WATERMARK BACKGROUND ---------- */
 /* Strip the heavy frame: no shadow, no border, no inner panel */
+.hero-showcase { position: relative; }
 .hero-showcase-frame {
   box-shadow: none !important;
   border: none !important;
@@ -225,6 +234,8 @@
   background: transparent !important;
   overflow: visible !important;
   height: 480px;
+  position: relative;
+  z-index: 1;
 }
 .hero-art {
   background: transparent !important;
@@ -234,21 +245,36 @@
 .hero-art-glow.glow-1 { background: #93c5fd !important; opacity: .35 !important; }
 .hero-art-glow.glow-2 { background: #2563eb !important; opacity: .22 !important; }
 
-/* Massive watermark monogram behind the product */
-.hero-watermark {
-  position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-family: "Poppins", sans-serif; font-weight: 900; letter-spacing: -.06em;
-  font-size: clamp(15rem, 30vw, 24rem); line-height: 1;
-  color: transparent;
-  background: linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(96, 165, 250, .06) 60%, rgba(37, 99, 235, .03));
-  -webkit-background-clip: text; background-clip: text;
-  user-select: none;
+/* Premium product-themed background — blurred workspace photo + soft brand glow
+   (no monogram watermark). The photo is layered behind everything; product art floats above. */
+.hero-bg-photo {
+  position: absolute; inset: -40px;
+  background-image: url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70');
+  background-size: cover; background-position: center;
+  filter: blur(14px) saturate(.85);
+  opacity: .22;
+  z-index: 0;
+  border-radius: 32px;
+  pointer-events: none;
+  mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
 }
-[data-bs-theme="dark"] .hero-watermark {
-  background: linear-gradient(135deg, rgba(96, 165, 250, .14), rgba(37, 99, 235, .06));
-  -webkit-background-clip: text; background-clip: text;
+.hero-bg-aurora {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: 32px;
+  background:
+    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .35), transparent 70%),
+    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .28), transparent 70%),
+    radial-gradient(260px 220px at 70% 15%, rgba(167, 139, 250, .22), transparent 70%);
+  filter: blur(2px);
 }
+[data-bs-theme="dark"] .hero-bg-photo { opacity: .14; filter: blur(16px) saturate(.7) brightness(.7); }
+[data-bs-theme="dark"] .hero-bg-aurora {
+  background:
+    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .25), transparent 70%),
+    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .35), transparent 70%);
+}
+/* Hide the old M watermark if still present in markup */
+.hero-watermark { display: none !important; }
 
 /* Hero art image now hovers cleanly inside the watermark */
 .hero-art-img {
@@ -539,7 +565,7 @@
   padding: 6px; perspective: 700px;
 }
 .cart-popup-img img { width: 100%; height: 100%; object-fit: contain;
-  animation: product-tilt 3.5s ease-in-out infinite; transform-style: preserve-3d; }
+  animation: product-tilt 8s ease-in-out infinite; transform-style: preserve-3d; }
 .cart-popup-info { min-width: 0; flex: 1; }
 .cart-popup-info .name {
   font-size: .85rem; font-weight: 700; color: var(--bs-emphasis-color);
