@@ -168,24 +168,27 @@
 .hero-glass-thumb img,
 .product-3d-img {
   transform-style: preserve-3d;
-  animation: product-tilt 14s ease-in-out infinite;
-  transition: transform .6s cubic-bezier(.34, 1.2, .64, 1), filter .35s ease;
+  animation: product-sweep-180 9s ease-in-out infinite;
+  transition: transform .55s cubic-bezier(.34, 1.2, .64, 1), filter .35s ease;
   filter: drop-shadow(0 10px 18px rgba(11, 23, 51, .18));
   will-change: transform;
+  backface-visibility: hidden;
 }
-/* Very subtle resting tilt — premium and non-distracting */
-@keyframes product-tilt {
-  0%, 100% { transform: translateY(0)    rotateY(-6deg) rotateX(1deg); }
-  50%      { transform: translateY(-3px) rotateY( 6deg) rotateX(-1deg); }
+/* 180° arc — rotates from -90° to +90° around Y so the product noticeably
+   "turns to look at the viewer" both ways, never showing the mirrored back. */
+@keyframes product-sweep-180 {
+  0%, 100% { transform: translateY(0)    rotateY(-75deg) rotateX(2deg); }
+  25%      { transform: translateY(-3px) rotateY(-40deg) rotateX(1deg); }
+  50%      { transform: translateY(-6px) rotateY(  0deg) rotateX(0deg); }
+  75%      { transform: translateY(-3px) rotateY( 40deg) rotateX(-1deg); }
 }
-/* Hover: deeper tilt only (no continuous spin) — feels like the box turns toward you */
+/* Hover: speed up + deepen the angle for a dramatic 180° dance */
 .product-card:hover .product-img-wrap img,
 .shop-row:hover .shop-row-img img,
 .strip-card:hover .strip-img img,
 .hero-glass-slide:hover .hero-glass-thumb img {
-  animation-play-state: paused;
-  transform: translateY(-8px) rotateY(-14deg) rotateX(4deg) scale(1.05);
-  filter: drop-shadow(0 18px 28px rgba(37, 99, 235, .42));
+  animation-duration: 4s;
+  filter: drop-shadow(0 18px 28px rgba(37, 99, 235, .45));
 }
 /* Reserved spin keyframes — used by cart popup only */
 @keyframes product-spin360 {
@@ -205,19 +208,20 @@
 }
 .product-detail-3d img {
   position: relative; z-index: 1; transform-style: preserve-3d;
-  animation: product-detail-tilt 16s ease-in-out infinite;
+  animation: product-detail-sweep-180 11s ease-in-out infinite;
   filter: drop-shadow(0 24px 36px rgba(11, 23, 51, .35));
   transition: transform .8s cubic-bezier(.34, 1.2, .64, 1);
+  backface-visibility: hidden;
 }
-@keyframes product-detail-tilt {
-  0%, 100% { transform: rotateY(-9deg) rotateX(1deg)  translateY(0); }
-  50%      { transform: rotateY( 9deg) rotateX(-1deg) translateY(-6px); }
+/* 180° sweep on the large hero product image — visible turning both ways */
+@keyframes product-detail-sweep-180 {
+  0%, 100% { transform: rotateY(-75deg) rotateX(2deg)  translateY(0); }
+  25%      { transform: rotateY(-40deg) rotateX(1deg)  translateY(-6px); }
+  50%      { transform: rotateY(  0deg) rotateX(0deg)  translateY(-10px); }
+  75%      { transform: rotateY( 40deg) rotateX(-1deg) translateY(-6px); }
 }
-/* Hover: tilt deeper, no continuous spin */
-.product-detail-3d:hover img {
-  animation-play-state: paused;
-  transform: rotateY(-18deg) rotateX(4deg) scale(1.06) translateY(-10px);
-}
+/* Hover: speed up the same sweep for emphasis */
+.product-detail-3d:hover img { animation-duration: 5s; }
 @media (prefers-reduced-motion: reduce) {
   .product-img-wrap img, .shop-row-img img, .strip-img img, .hero-glass-thumb img,
   .product-detail-3d img, .product-3d-img { animation: none; }
