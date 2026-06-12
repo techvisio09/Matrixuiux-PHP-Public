@@ -646,3 +646,168 @@
   .compact-row, .compact-row.cols-3 { grid-template-columns: 1fr 1fr; }
   .compact-row.full { grid-template-columns: 1fr; }
 }
+
+
+/* ===========================================================================
+   12. DARK MODE CONTRAST PASS — every text element clearly readable
+   ========================================================================= */
+[data-bs-theme="dark"] {
+  --bs-body-color: #eef2f9;
+  --bs-secondary-color: #b6c2d6;   /* was #94a3b8 — lift for readability */
+  --bs-emphasis-color: #ffffff;
+}
+
+/* Brand wordmark — solid bright gradient with strong shadow for guaranteed readability */
+[data-bs-theme="dark"] .brand-text-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #cfe1ff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, .35),
+    0 2px 0 rgba(0, 0, 0, .28),
+    0 4px 14px rgba(96, 165, 250, .55);
+}
+/* Same fix on the checkout banner (dark-blue band) — even higher contrast */
+.checkout-brand-banner .brand-text-3d,
+[data-bs-theme="dark"] .checkout-brand-banner .brand-text-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #e0ecff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, .42),
+    0 4px 0 rgba(0, 0, 0, .28),
+    0 8px 18px rgba(0, 0, 0, .45);
+  font-weight: 900;
+}
+
+/* Brand mark SVG — add subtle white ring + brighter drop-shadow in dark mode */
+[data-bs-theme="dark"] .brand-mark {
+  filter:
+    drop-shadow(0 0 0.5px rgba(255, 255, 255, .9))
+    drop-shadow(0 6px 18px rgba(96, 165, 250, .6));
+}
+
+/* AUTHORIZED RESELLER tag */
+[data-bs-theme="dark"] .brand-tag { color: #93c5fd; }
+
+/* Trust bar / topbar — guarantee white text */
+[data-bs-theme="dark"] .topbar,
+[data-bs-theme="dark"] .topbar a,
+[data-bs-theme="dark"] .trustbar,
+[data-bs-theme="dark"] .trustbar a,
+[data-bs-theme="dark"] .trustbar span { color: #eef2f9 !important; }
+[data-bs-theme="dark"] .trustbar .text-success { color: #4ade80 !important; }
+[data-bs-theme="dark"] .trustbar .text-warning,
+[data-bs-theme="dark"] .topbar strong { color: #fbbf24 !important; }
+
+/* Nav links + dropdown items in glassy sticky navbar */
+[data-bs-theme="dark"] .navbar .nav-link { color: #e6ecf7 !important; }
+[data-bs-theme="dark"] .navbar .nav-link:hover { color: #ffffff !important; }
+[data-bs-theme="dark"] .dropdown-item { color: #e6ecf7; }
+[data-bs-theme="dark"] .dropdown-item.active { background: rgba(37, 99, 235, .35); color: #fff; }
+
+/* Currency / theme toggle buttons */
+[data-bs-theme="dark"] .btn-outline-secondary {
+  --bs-btn-color: #d6deec;
+  --bs-btn-border-color: rgba(96, 165, 250, .45);
+  --bs-btn-hover-bg: rgba(96, 165, 250, .15);
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-border-color: rgba(96, 165, 250, .7);
+}
+
+/* Form inputs — brighter placeholder, clearer text */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select { color: #eef2f9; background: #0f1d3a; border-color: rgba(96, 165, 250, .3); }
+[data-bs-theme="dark"] .form-control::placeholder { color: #93a4c2 !important; opacity: 1; }
+[data-bs-theme="dark"] .compact-input { background: #0f1d3a !important; }
+[data-bs-theme="dark"] .compact-input::placeholder { color: #93a4c2 !important; }
+[data-bs-theme="dark"] .compact-label { color: #b6c2d6; }
+
+/* Section tags / eyebrows / filter group titles — brighter sky blue */
+[data-bs-theme="dark"] .eyebrow,
+[data-bs-theme="dark"] .section-tag,
+[data-bs-theme="dark"] .filter-group-title,
+[data-bs-theme="dark"] .mega .mega-heading,
+[data-bs-theme="dark"] .antivirus-menu .mega-heading { color: #7eb6ff !important; }
+
+/* Sort label pill + select — readable on dark */
+[data-bs-theme="dark"] .sort-select {
+  color: #93c5fd; border-color: rgba(96, 165, 250, .55);
+  background: rgba(96, 165, 250, .08);
+}
+[data-bs-theme="dark"] .sort-label { color: #fff; }
+
+/* Filter sidebar checkboxes & counts */
+[data-bs-theme="dark"] .filter-check .form-check-label { color: #e6ecf7; }
+[data-bs-theme="dark"] .filter-count { color: #b6c2d6; background: rgba(96, 165, 250, .12); }
+
+/* Product card text — bold & legible */
+[data-bs-theme="dark"] .product-card .product-title,
+[data-bs-theme="dark"] .product-title { color: #e6ecf7; }
+[data-bs-theme="dark"] .product-card:hover .product-title { color: #93c5fd; }
+[data-bs-theme="dark"] .product-card .text-primary,
+[data-bs-theme="dark"] .strip-card .text-primary,
+[data-bs-theme="dark"] .shop-row .text-primary { color: #93c5fd !important; }
+
+/* Strikethrough original-price small text */
+[data-bs-theme="dark"] .text-decoration-line-through.text-secondary { color: #8b97ad !important; }
+
+/* Hero hint text + checklists */
+[data-bs-theme="dark"] .hero .text-secondary { color: #cbd5ea !important; }
+[data-bs-theme="dark"] .hero .accent { color: #7eb6ff; }
+
+/* Page-head titles + breadcrumbs in dark */
+[data-bs-theme="dark"] .page-head h1,
+[data-bs-theme="dark"] .page-head .h2 { color: #ffffff; }
+[data-bs-theme="dark"] .page-head .text-secondary { color: #b6c2d6 !important; }
+[data-bs-theme="dark"] .breadcrumb-item, [data-bs-theme="dark"] .breadcrumb-item a { color: #b6c2d6; }
+[data-bs-theme="dark"] .breadcrumb-item.active { color: #ffffff; }
+[data-bs-theme="dark"] .breadcrumb-item + .breadcrumb-item::before { color: #8b97ad; }
+
+/* Cart page line items + totals */
+[data-bs-theme="dark"] .cart-remove-btn { background: rgba(239, 68, 68, .18); color: #fca5a5; }
+
+/* Checkout summary mini items in dark — borders + total */
+[data-bs-theme="dark"] .summary-mini { border-bottom-color: rgba(96, 165, 250, .22); }
+[data-bs-theme="dark"] .summary-total-line {
+  background: linear-gradient(90deg, rgba(37, 99, 235, .22), rgba(96, 165, 250, .12));
+  border-color: rgba(96, 165, 250, .4);
+}
+[data-bs-theme="dark"] .summary-total-line .price { color: #cfe1ff; }
+
+/* Pay tiles */
+[data-bs-theme="dark"] .pay-tile { background: #0f1d3a; border-color: rgba(96, 165, 250, .28); }
+[data-bs-theme="dark"] .pay-option.active { background: rgba(37, 99, 235, .2); border-color: #60a5fa; }
+
+/* Accordion answers / FAQ text */
+[data-bs-theme="dark"] .accordion-body { color: #cbd5ea; }
+
+/* Welcome-back / "AI" mini badges and similar light badges */
+[data-bs-theme="dark"] .badge.text-bg-success-subtle { background: rgba(74, 222, 128, .18) !important; color: #86efac !important; }
+[data-bs-theme="dark"] .badge.text-bg-secondary-subtle { background: rgba(148, 163, 184, .2) !important; color: #cbd5ea !important; }
+[data-bs-theme="dark"] .badge.text-bg-warning { background: rgba(251, 191, 36, .2) !important; color: #fcd34d !important; }
+[data-bs-theme="dark"] .badge.text-bg-info { background: rgba(56, 189, 248, .2) !important; color: #7dd3fc !important; }
+[data-bs-theme="dark"] .badge.text-bg-success { background: rgba(74, 222, 128, .25) !important; color: #86efac !important; }
+
+/* Cart popup body text */
+[data-bs-theme="dark"] #cart-popup { background: #0f1d3a; border-color: rgba(96, 165, 250, .3); }
+[data-bs-theme="dark"] .cart-popup-info .name { color: #ffffff; }
+
+/* Footer dark links */
+[data-bs-theme="dark"] .footer-dark .text-secondary { color: #b6c2d6 !important; }
+[data-bs-theme="dark"] .footer-dark p, [data-bs-theme="dark"] .footer-dark li { color: #b6c2d6; }
+[data-bs-theme="dark"] .footer-dark h6 { color: #ffffff; }
+[data-bs-theme="dark"] .footer-dark a { color: #d6deec; }
+[data-bs-theme="dark"] .footer-dark a:hover { color: #ffffff; }
+[data-bs-theme="dark"] .footer-dark { background: #04091a; }
+
+/* Ask AI pill */
+[data-bs-theme="dark"] .ask-ai-pill { background: rgba(37, 99, 235, .14); border-color: rgba(96, 165, 250, .35); }
+[data-bs-theme="dark"] .ask-ai-pill .fw-bold { color: #ffffff; }
+
+/* Variant pill outline buttons in dark — readable */
+[data-bs-theme="dark"] .variant-blur { color: #7e8aa3; }
+
+/* Tabs (product description / delivery / volume pricing) */
+[data-bs-theme="dark"] .nav-tabs .nav-link { color: #cbd5ea; }
+[data-bs-theme="dark"] .nav-tabs .nav-link.active { color: #93c5fd; background: transparent; border-color: rgba(96, 165, 250, .35) rgba(96, 165, 250, .35) transparent; }
