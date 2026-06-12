@@ -364,3 +364,8 @@ All catalog data lives in `/app/frontend/src/mock.js`. Backend `server.py` now h
 - **Floating toll-free CTA** (footer.php + theme3d.css): bottom-left pill on EVERY page — pulsing green gradient, shaking phone icon, "TOLL FREE · 24/7" label + number. Hides text label on mobile (icon-only).
 - **Hero without boxed overlay** (index.php): removed the heavy frame border/shadow/grid, added giant transparent watermark "M" monogram (clamp 15rem→24rem) behind the floating tiles; product image floats cleanly with deep drop-shadow.
 - **Test credentials** updated for Matrixuiux PHP app.
+
+## Changelog — Jun 12, 2026 (Animation refinement + product-themed hero background — verified via screenshots)
+- **Slower, calmer product animations**: tilt cycle 5.5s → 14s (cards/strip/shop/hero glass), product detail 7s → 16s, cart popup 3.5s → 8s. Continuous 360° hover-spin removed entirely; hover now just deepens the tilt (rotateY -14/-18° + scale 1.05-1.06 + lift) and pauses the resting animation — feels like the box turning toward the viewer.
+- **Hero background = featured product's OWN box-shot**: 5 stacked `.hero-bg-photo` layers (one per rotating hero product), each loading that product's image, blurred 22px and masked to a soft radial fade. `main.js` rotator toggles `.active` in sync with the foreground product, so the backdrop crossfades together with the glass-card content. Removed the "M" monogram entirely.
+- **Soft brand aurora** behind the hero (3 radial gradients of sky/blue/indigo) + same `.page-head::before` aurora applied sitewide on Shop / Category / Cart / Blog page-head bands for consistency.

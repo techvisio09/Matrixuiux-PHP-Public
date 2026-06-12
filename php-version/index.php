@@ -56,7 +56,9 @@ include __DIR__ . '/includes/header.php';
         $hi = app_icons();
         ?>
         <div class="hero-showcase mx-auto position-relative" data-testid="hero-showcase">
-          <span class="hero-bg-photo" aria-hidden="true"></span>
+          <?php foreach ($heroSlides as $i => $hp): ?>
+            <span class="hero-bg-photo<?= $i === 0 ? ' active' : '' ?>" data-testid="hero-bg-<?= $i ?>" style="background-image:url('<?= esc($hp['image']) ?>');" aria-hidden="true"></span>
+          <?php endforeach; ?>
           <span class="hero-bg-aurora" aria-hidden="true"></span>
           <div class="hero-showcase-frame">
             <div class="hero-art" aria-hidden="true">

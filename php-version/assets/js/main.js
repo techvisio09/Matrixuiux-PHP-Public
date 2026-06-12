@@ -364,6 +364,8 @@ async function sendChat(ev) {
     slides.forEach((s, i) => s.classList.toggle('active', i === idx));
     // Sync the large hero art image with the active slide
     document.querySelectorAll('.hero-art-img').forEach((el, i) => el.classList.toggle('active', i === idx));
+    // Sync the blurred product-themed background (5 stacked layers, one per slide)
+    document.querySelectorAll('.hero-bg-photo').forEach((el, i) => el.classList.toggle('active', i === idx));
     // Keep the hero photo linking to the product currently shown in the glass card
     const photoLink = document.getElementById('hero-photo-link');
     if (photoLink && slides[idx].getAttribute('href')) {

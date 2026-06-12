@@ -245,36 +245,58 @@
 .hero-art-glow.glow-1 { background: #93c5fd !important; opacity: .35 !important; }
 .hero-art-glow.glow-2 { background: #2563eb !important; opacity: .22 !important; }
 
-/* Premium product-themed background — blurred workspace photo + soft brand glow
-   (no monogram watermark). The photo is layered behind everything; product art floats above. */
+/* Premium product-themed background: the featured product's OWN box-shot,
+   blurred and enlarged, sits behind the hero. 5 stacked layers crossfade in
+   sync with the foreground product rotator (.active class is toggled by main.js). */
 .hero-bg-photo {
   position: absolute; inset: -40px;
-  background-image: url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70');
-  background-size: cover; background-position: center;
-  filter: blur(14px) saturate(.85);
-  opacity: .22;
+  background-size: 120%;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+  filter: blur(22px) saturate(1.05);
+  opacity: 0;
   z-index: 0;
   border-radius: 32px;
   pointer-events: none;
   mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
   -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+  transition: opacity 1.1s ease;
 }
+.hero-bg-photo.active { opacity: .32; }
+[data-bs-theme="dark"] .hero-bg-photo.active { opacity: .22; filter: blur(24px) saturate(.9) brightness(.85); }
+
 .hero-bg-aurora {
   position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: 32px;
   background:
-    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .35), transparent 70%),
-    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .28), transparent 70%),
-    radial-gradient(260px 220px at 70% 15%, rgba(167, 139, 250, .22), transparent 70%);
+    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .38), transparent 70%),
+    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .32), transparent 70%),
+    radial-gradient(260px 220px at 70% 15%, rgba(167, 139, 250, .25), transparent 70%);
   filter: blur(2px);
 }
-[data-bs-theme="dark"] .hero-bg-photo { opacity: .14; filter: blur(16px) saturate(.7) brightness(.7); }
 [data-bs-theme="dark"] .hero-bg-aurora {
   background:
-    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .25), transparent 70%),
-    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .35), transparent 70%);
+    radial-gradient(420px 320px at 20% 25%, rgba(96, 165, 250, .28), transparent 70%),
+    radial-gradient(380px 300px at 80% 80%, rgba(37, 99, 235, .4), transparent 70%);
 }
 /* Hide the old M watermark if still present in markup */
 .hero-watermark { display: none !important; }
+
+
+/* ---- Sitewide page-head aurora (consistent with hero treatment) ---- */
+.page-head { position: relative; overflow: hidden; }
+.page-head::before {
+  content: ''; position: absolute; inset: -20%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(500px 300px at 12% 30%, rgba(96, 165, 250, .26), transparent 70%),
+    radial-gradient(420px 280px at 88% 70%, rgba(37, 99, 235, .22), transparent 70%);
+  filter: blur(4px);
+}
+.page-head > .container { position: relative; z-index: 1; }
+[data-bs-theme="dark"] .page-head::before {
+  background:
+    radial-gradient(500px 300px at 12% 30%, rgba(96, 165, 250, .22), transparent 70%),
+    radial-gradient(420px 280px at 88% 70%, rgba(37, 99, 235, .28), transparent 70%);
+}
 
 /* Hero art image now hovers cleanly inside the watermark */
 .hero-art-img {
