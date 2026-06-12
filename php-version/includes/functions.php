@@ -321,7 +321,7 @@ function render_product_row(array $p): string
 {
     $pct = ($p['original_price'] && $p['original_price'] > $p['price'])
         ? round((1 - $p['price'] / $p['original_price']) * 100) : 0;
-    $orig = $pct ? '<small class="text-secondary text-decoration-line-through d-block">' . format_price((float)$p['original_price']) . '</small>' : '';
+    $orig = $pct ? '<span class="price-old">' . format_price((float)$p['original_price']) . '</span>' : '';
     $save = $pct ? '<span class="badge text-bg-danger">Save ' . $pct . '%</span>' : '';
     $badge = $p['badge'] ? '<span class="badge text-bg-primary">' . esc($p['badge']) . '</span>' : '';
     $osIcon = $p['platform'] === 'Mac' ? 'macos' : 'windows';
@@ -348,8 +348,10 @@ function render_product_row(array $p): string
           </div>
         </div>
         <div class="shop-row-buy text-sm-end flex-shrink-0">
-          ' . $orig . '
-          <div class="fw-bold text-primary fs-4 lh-1 mb-2">' . format_price((float)$p['price']) . '</div>
+          <div class="price-pair justify-content-sm-end mb-2">
+            <span class="price-now fs-4">' . format_price((float)$p['price']) . '</span>
+            ' . $orig . '
+          </div>
           <div class="d-flex flex-sm-column gap-2">
             <button class="btn btn-sm btn-primary rounded-pill px-3 add-to-cart-btn" data-slug="' . esc($p['slug']) . '" data-testid="add-to-cart-' . esc($p['slug']) . '"><i class="bi bi-cart-plus me-1"></i>Add to Cart</button>
             <a href="product.php?slug=' . esc($p['slug']) . '" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-testid="view-details-' . esc($p['slug']) . '">Details</a>
@@ -368,7 +370,7 @@ function render_product_card(array $p): string
     }
     $badge = $p['badge'] ? '<span class="badge text-bg-primary position-absolute top-0 start-0 m-2">' . esc($p['badge']) . '</span>' : '';
     $orig = ($p['original_price'] && $p['original_price'] > $p['price'])
-        ? '<small class="text-secondary text-decoration-line-through ms-2">' . format_price((float)$p['original_price']) . '</small>' : '';
+        ? '<span class="price-old">' . format_price((float)$p['original_price']) . '</span>' : '';
     return '
     <div class="card product-card h-100 position-relative" data-testid="product-card-' . esc($p['slug']) . '">
       ' . $badge . $discount . '
@@ -380,7 +382,10 @@ function render_product_card(array $p): string
       <div class="card-body text-center d-flex flex-column">
         <div class="mb-1 small">' . render_stars((float)$p['rating']) . ' <span class="text-secondary">(' . (int)$p['reviews'] . ')</span></div>
         <a href="product.php?slug=' . esc($p['slug']) . '" class="text-decoration-none text-body fw-semibold product-title mb-1 mx-auto">' . esc($p['name']) . '</a>
-        <div class="mb-3"><span class="fw-bold text-primary">' . format_price((float)$p['price']) . '</span>' . $orig . '</div>
+        <div class="price-pair justify-content-center mb-3">
+          <span class="price-now">' . format_price((float)$p['price']) . '</span>
+          ' . $orig . '
+        </div>
         <button class="btn btn-sm btn-elessi add-to-cart-btn mt-auto w-100" data-slug="' . esc($p['slug']) . '" data-testid="add-to-cart-' . esc($p['slug']) . '"><i class="bi bi-cart-plus me-1"></i>Add to Cart</button>
       </div>
     </div>';

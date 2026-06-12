@@ -638,6 +638,40 @@
 @media (max-width: 991.98px) {
   .hero-showcase-frame { height: 420px; }
 }
+/* ---------- Reusable price pair (current + strikethrough) — sitewide consistent spacing ---------- */
+.price-pair { display: inline-flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.price-pair .price-now { font-weight: 800; color: var(--uc-blue); letter-spacing: -.02em; line-height: 1.1; }
+.price-pair .price-old { font-size: .78rem; color: var(--bs-secondary-color); text-decoration: line-through; line-height: 1.1; }
+[data-bs-theme="dark"] .price-pair .price-now { color: #93c5fd; }
+[data-bs-theme="dark"] .price-pair .price-old { color: #8ea0bf; }
+/* Apply gap automatically anywhere a strikethrough small sits right after a price span */
+.fw-bold + small.text-decoration-line-through,
+.text-primary + small.text-decoration-line-through { margin-left: .55rem !important; }
+
+
+/* ---------- Hero product info card — outer "glass box" removed, blends with theme ---------- */
+.hero-product-glass {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  height: auto !important;
+  bottom: 4% !important;
+  padding: 0 !important;
+}
+.hero-glass-slide { padding: .35rem .25rem !important; }
+/* Make the thumb sit on a neutral chip so the product image stays legible
+   without a white card frame around the whole row */
+.hero-glass-thumb {
+  background: rgba(255, 255, 255, .94) !important;
+  box-shadow: 0 10px 22px rgba(11, 23, 51, .22);
+  border-color: rgba(37, 99, 235, .22) !important;
+}
+.hero-glass-name { color: var(--bs-emphasis-color) !important; text-shadow: 0 1px 2px rgba(11, 23, 51, .15); }
+[data-bs-theme="dark"] .hero-glass-name { color: #f4f7fd !important; text-shadow: 0 2px 6px rgba(0, 0, 0, .55); }
+[data-bs-theme="dark"] .hero-glass-thumb { background: #f4f7fd !important; border-color: rgba(96, 165, 250, .35) !important; }
+
 @media (max-width: 575.98px) {
   .hero-showcase-frame { height: 360px; }
   .hero-watermark { font-size: 14rem; }

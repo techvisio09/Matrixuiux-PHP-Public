@@ -149,8 +149,10 @@ include __DIR__ . '/includes/header.php';
                 <img src="<?= esc($p['image']) ?>" alt="<?= esc(product_img_alt($p)) ?>" title="<?= esc($p['name']) ?>" style="width:54px;height:54px;object-fit:contain;" class="bg-body-tertiary rounded p-1">
                 <div>
                   <div class="small fw-semibold text-body lh-sm"><?= esc($p['name']) ?></div>
-                  <span class="fw-bold text-primary small"><?= format_price((float)$p['price']) ?></span>
-                  <?php if ($p['original_price']): ?><small class="text-secondary text-decoration-line-through ms-1"><?= format_price((float)$p['original_price']) ?></small><?php endif; ?>
+                  <span class="price-pair">
+                    <span class="price-now small"><?= format_price((float)$p['price']) ?></span>
+                    <?php if ($p['original_price']): ?><span class="price-old"><?= format_price((float)$p['original_price']) ?></span><?php endif; ?>
+                  </span>
                 </div>
               </div>
             </a>
